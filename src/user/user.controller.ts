@@ -8,12 +8,12 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/nhc-login')
-  login(
-    @Query('social_id') social_id: string,
+  async login(
+    @Query('id') social_id: string,
     @Query('device_token') device_token: string,
     @Query('social_type') social_type: string,
   ) {
-    this.userService.login(social_id);
+    await this.userService.login(social_id);
     // const [token, user] = this.userService.login({
     //   social_id: social_id,
     //   device_token: device_token,

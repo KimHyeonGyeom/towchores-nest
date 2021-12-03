@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 import { Users } from './entities/Users';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/exception/http-exception.filter';
-
+import * as ormconfig from './ormconfig';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,9 +24,6 @@ import { HttpExceptionFilter } from './common/exception/http-exception.filter';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [Users],
-      migrations: [__dirname + '/src/migrations/*.ts'],
-      cli: { migrationsDir: 'src/migrations' },
-      autoLoadEntities: true,
       charset: 'utf8mb4',
       synchronize: false,
       logging: true,
