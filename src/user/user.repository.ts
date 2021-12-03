@@ -1,19 +1,27 @@
-import { Repository, EntityRepository, EntityManager } from 'typeorm';
-import { Users } from '../entities/Users';
-import { Injectable } from '@nestjs/common';
-
-@EntityRepository()
-export class UserRepository {
-  constructor(private manager: EntityManager) {}
-  /**
-   * 유저 정보 조회
-   * @param {object} raw {id : 소셜 아이디, transaction : 트랜잭션}
-   */
-  async findBySocialId(social_id: string) {
-    try {
-      // return this.manager.findOne({ where: { social_id } });
-    } catch (err) {
-      //throw new DatabaseException(err);
-    }
-  }
-}
+// import {
+//   Repository,
+//   EntityRepository,
+//   EntityManager,
+//   TransactionManager,
+// } from 'typeorm';
+// import { Users } from '../entities/Users';
+// import { HttpException, Injectable } from '@nestjs/common';
+//
+// @EntityRepository(Users)
+// export class UserRepository extends Repository<Users> {
+//   /**
+//    * 유저 정보 조회
+//    * @param transactionManager
+//    * @param social_id
+//    */
+//   async findBySocialId(
+//     @TransactionManager() transactionManager: EntityManager,
+//     id: string,
+//   ) {
+//     try {
+//       return await transactionManager.findOne(Users, { where: { ss: id } });
+//     } catch (err) {
+//       throw err;
+//     }
+//   }
+// }

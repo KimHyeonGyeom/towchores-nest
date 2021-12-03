@@ -13,7 +13,7 @@ export class UserController {
     @Query('device_token') device_token: string,
     @Query('social_type') social_type: string,
   ) {
-    await this.userService.login(social_id);
+    //await this.userService.login(social_id);
     // const [token, user] = this.userService.login({
     //   social_id: social_id,
     //   device_token: device_token,

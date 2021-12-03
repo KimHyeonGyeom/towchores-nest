@@ -1,39 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from './user.repository';
-import { Connection } from 'typeorm';
-import { Users } from '../entities/Users';
+import { HttpException, Injectable } from '@nestjs/common';
+
 @Injectable()
-export class UserService {
-  constructor(
-    private connection: Connection, //@InjectRepository(UserRepository) //private userRepository: UserRepository,
-  ) {}
+export class UserService {}
 
-  /**
-   * 로그인
-   */
-  async login(id: string) {
-    const queryRunner = this.connection.createQueryRunner();
+/**
+ * 로그인
+ */
+//async login(id: string) {
+//   const queryRunner = this.connection.createQueryRunner();
+//
+//   await queryRunner.connect();
+//   await queryRunner.startTransaction();
+//
+//   try {
+//     // //유저 정보 조회
+//     // const user = await this.userRepository.findBySocialId(
+//     //   queryRunner.manager,
+//     //   id,
+//     // );
+//
+//     //console.log(user);
+//     //commit
+//     await queryRunner.commitTransaction();
+//   } catch (QueryFailedError) {
+//     // since we have errors lets rollback the changes we made
+//
+//     await queryRunner.rollbackTransaction();
+//     //throw new HttpException('asd', 400);
+//   } finally {
+//     // you need to release a queryRunner which was manually instantiated
+//     await queryRunner.release();
+//   }
+// }
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const user = await queryRunner.manager
-      .getRepository(Users)
-      .findOne({ where: { id } });
-    console.log(user);
-    try {
-      //유저 정보 조회
-      //commit
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      // since we have errors lets rollback the changes we made
-      await queryRunner.rollbackTransaction();
-    } finally {
-      // you need to release a queryRunner which was manually instantiated
-      await queryRunner.release();
-    }
-  }
-}
+//}
 
 //   if (!user) {
 //     throw new NotFoundException(__("ERROR_USER_NOT_FOUND_MESSAGE"));

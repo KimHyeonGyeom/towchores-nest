@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/exception/http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import { QueryFailedFilter } from './common/exception/query-failed.filter';
 
 declare const module: any;
 
@@ -10,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 8080;
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new QueryFailedFilter());
   // const config = new DocumentBuilder()
   //   .setTitle('동네잡일 API')
   //   .setDescription('동네잡일 개발을 위한 API 문서입니다.')
@@ -23,9 +24,9 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`App listening on the port ${port}`);
 
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
+  // if (module.hot) {
+  //   module.hot.accept();
+  //   module.hot.dispose(() => app.close());
+  // }
 }
 bootstrap();

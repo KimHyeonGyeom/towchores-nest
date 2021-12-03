@@ -13,32 +13,31 @@ import * as ormconfig from './ormconfig';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath:
-        process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev',
+      envFilePath: '.env.dev',
     }),
-    TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT as any,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [Users],
-      charset: 'utf8mb4',
-      synchronize: false,
-      logging: true,
-      keepConnectionAlive: true,
-    }),
+    // TypeOrmModule.forRoot({
+    //   type: process.env.DB_TYPE as any,
+    //   host: process.env.DB_HOST,
+    //   port: process.env.DB_PORT as any,
+    //   username: process.env.DB_USERNAME,
+    //   password: process.env.DB_PASSWORD,
+    //   database: process.env.DB_DATABASE,
+    //   entities: [Users],
+    //   charset: 'utf8mb4',
+    //   synchronize: false,
+    //   logging: true,
+    //   keepConnectionAlive: true,
+    // }),
     UserModule,
-    TypeOrmModule.forFeature([Users]),
+    //TypeOrmModule.forFeature([Users]),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
   ],
 })
 export class AppModule implements NestModule {
