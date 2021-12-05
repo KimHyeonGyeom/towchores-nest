@@ -7,7 +7,7 @@
 FROM node:14 AS development
 
 # Specify our working directory, this is in our container/in our image
-WORKDIR /thomas/src/app
+WORKDIR /towchores/src/app
 
 # Copy the package.jsons from host to container
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -33,16 +33,16 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 # Set Working Directory
-WORKDIR /thomas/src/app
+WORKDIR /towchores/src/app
 
 # Copy all from development stage
-COPY --from=development /thomas/src/app/ .
+COPY --from=development /towchores/src/app/ .
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Run app
-CMD [ "node", "dist/main" ,"--inspect=0.0.0.0:9229" ]
+CMD [ "node", "dist/main" ]
 
 # Example Commands to build and run the dockerfile
-# docker build -t thomas-nest .
-# docker run thomas-nest
+# docker build -t towchores-nest .
+# docker run towchores-nest
