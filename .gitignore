@@ -1,6 +1,12 @@
 # compiled output
 /dist
 /node_modules
+.run
+db
+dev-mariadb
+docker-volume
+mysql
+init
 
 # Logs
 logs
