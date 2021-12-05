@@ -1,37 +1,49 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Connection } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from './user.repository';
+import { BadRequestException } from '../common/exception/bad-request.exception';
 
 @Injectable()
-export class UserService {}
+export class UserService {
+  constructor(
+    private connection: Connection,
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
+  ) {}
 
-/**
- * 로그인
- */
-//async login(id: string) {
-//   const queryRunner = this.connection.createQueryRunner();
-//
-//   await queryRunner.connect();
-//   await queryRunner.startTransaction();
-//
-//   try {
-//     // //유저 정보 조회
-//     // const user = await this.userRepository.findBySocialId(
-//     //   queryRunner.manager,
-//     //   id,
-//     // );
-//
-//     //console.log(user);
-//     //commit
-//     await queryRunner.commitTransaction();
-//   } catch (QueryFailedError) {
-//     // since we have errors lets rollback the changes we made
-//
-//     await queryRunner.rollbackTransaction();
-//     //throw new HttpException('asd', 400);
-//   } finally {
-//     // you need to release a queryRunner which was manually instantiated
-//     await queryRunner.release();
-//   }
-// }
+  /**
+   * 로그인
+   */
+  async login(id: string) {
+    const queryRunner = this.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // //유저 정보 조회
+      throw new BadRequestException('123t', 'tf');
+      // throw new Error('123');
+      const user = await this.userRepository.findBySocialId(
+        queryRunner.manager,
+        id,
+      );
+      //console.log(user);
+      //commit
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors lets rollback the changes we made
+      await queryRunner.rollbackTransaction();
+      throw err;
+      //throw new QueryFailedError(err);
+      //throw new BadRequestException('Account with this email already exists.');
+    } finally {
+      // you need to release a queryRunner which was manually instantiated
+      await queryRunner.release();
+    }
+  }
+}
 
 //}
 

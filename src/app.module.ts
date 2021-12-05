@@ -7,37 +7,42 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UserModule } from './user/user.module';
 import { Users } from './entities/Users';
 import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './common/exception/http-exception.filter';
+import { HttpExceptionFilter } from './filter/http-exception.filter';
 import * as ormconfig from './ormconfig';
+import { QueryFailedFilter } from './filter/query-failed.filter';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env.dev',
     }),
-    // TypeOrmModule.forRoot({
-    //   type: process.env.DB_TYPE as any,
-    //   host: process.env.DB_HOST,
-    //   port: process.env.DB_PORT as any,
-    //   username: process.env.DB_USERNAME,
-    //   password: process.env.DB_PASSWORD,
-    //   database: process.env.DB_DATABASE,
-    //   entities: [Users],
-    //   charset: 'utf8mb4',
-    //   synchronize: false,
-    //   logging: true,
-    //   keepConnectionAlive: true,
-    // }),
+    TypeOrmModule.forRoot({
+      type: process.env.DB_TYPE as any,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT as any,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [Users],
+      charset: 'utf8mb4',
+      synchronize: false,
+      logging: true,
+      keepConnectionAlive: true,
+    }),
     UserModule,
-    //TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([Users]),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: HttpExceptionFilter,
-    // },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: QueryFailedFilter,
+    },
   ],
 })
 export class AppModule implements NestModule {
