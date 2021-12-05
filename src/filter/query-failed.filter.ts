@@ -9,7 +9,7 @@ import { QueryFailedError } from 'typeorm';
 
 @Catch(QueryFailedError)
 export class QueryFailedFilter implements ExceptionFilter<QueryFailedError> {
-  //constructor(public reflector: Reflector) {}
+  constructor(public reflector: Reflector) {}
 
   catch(
     exception: QueryFailedError & { constraint?: string },
@@ -22,12 +22,12 @@ export class QueryFailedFilter implements ExceptionFilter<QueryFailedError> {
       ? HttpStatus.CONFLICT
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    //   response.status(status).json({
-    //     statusCode: status,
-    //     error: STATUS_CODES[status],
-    //     message: exception.constraint
-    //       ? constraintErrors[exception.constraint]
-    //       : undefined,
-    //   });
+    response.status(status).json({
+      status: status,
+      error_message: '데이터베이스 오류가 발생하였습니다.',
+      client_message:
+        '서버에서 응답에러가 발생 하였습니다. \r 앱 종료 후 다시 접속해 주세요.',
+      client_message_type: 'popup',
+    });
   }
 }
