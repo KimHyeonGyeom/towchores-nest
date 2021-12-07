@@ -1,45 +1,5 @@
-#version: "3.8"
-#services:
-#  api:
-#    # image: thomas-oliver/nestjs-dockerized
-#    build:
-#      dockerfile: Dockerfile
-#      context: .
-#      # Only will build development stage from our dockerfile
-#      target: development
-#    # Mount our host Directory to the docker container
-#    # Mount (.) current directory to the docker container thomas/src/app
-#    # reflect file changes from host to container
-#    volumes:
-#      - .:/thomas/src/app
-#      - ./thomas/src/app/node_modules
-#    # Run in Debug Mode: npm run start:debug --> Don't forget to start your vscode debugger!
-#    # Run in dev Mode: npm run start:dev
-#    depends_on:
-#      - mysql
-#    command: npm run start:docker-dev-debug
-#    environment:
-#      MYSQL_HOST: "mysql"
-#    ports:
-#      - 8080:3000
-#      # debugging port
-#      - 9229:9229
-#  mysql: # Example Service
-#    container_name: myapp_mysql
-#    restart: always
-#    image: mysql:8.0
-#    environment:
-#      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-#      - MYSQL_USER=root
-#      - MYSQL_PASSWORD=1234
-#      - MYSQL_DATABASE=mysql
-#    ports:
-#      - 3306:3306
-#    expose:
-#      - 3306
-
-
 version: "3.8"
+
 networks:
   app-tier:
     driver: bridge
@@ -48,8 +8,11 @@ services:
     networks:
       - app-tier
     build:
-      context: .
       dockerfile: Dockerfile
+      context: .
+      target: development
+    environment:
+      NODE_ENV: development
     ports:
       - 8080:3000
       # debugging port
