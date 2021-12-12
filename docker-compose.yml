@@ -22,8 +22,10 @@ services:
       - ./towchores/src/app/node_modules
     links:
       - mysql
+      - redis
     depends_on:
       - mysql
+      - redis
     command: npm run start:docker-dev-debug
 
   mysql:
@@ -46,3 +48,13 @@ services:
     ports:
       - 3306:3306
 
+  redis:
+    networks:
+      - app-tier
+    image: redis
+    volumes:
+      - ./redis:/data
+    entrypoint: redis-server --appendonly yes
+    restart: always
+    ports:
+      - 6379:6379
