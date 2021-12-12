@@ -1,4 +1,12 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import {
   IsBoolean,
   IsDecimal,
@@ -110,12 +118,21 @@ export class Users {
     example: '',
     description: '생성날짜',
   })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   @Column('datetime', { name: 'created_at' })
   created_at: Date;
 
   @ApiProperty({
     example: '',
     description: '수정날짜',
+  })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   @Column('datetime', { name: 'updated_at' })
   updated_at: Date;
@@ -124,6 +141,7 @@ export class Users {
     example: '',
     description: '삭제날짜',
   })
+  @DeleteDateColumn()
   @Column('datetime', { name: 'deleted_at', nullable: true })
   deleted_at: Date | null;
 
@@ -143,7 +161,11 @@ export class Users {
   email: string | null;
 
   @IsString()
-  @Column('varchar', { name: 'password', nullable: true, length: 255 })
+  @Column('varchar', {
+    name: 'password',
+    nullable: true,
+    length: 255,
+  })
   password: string | null;
 
   @IsBoolean()
