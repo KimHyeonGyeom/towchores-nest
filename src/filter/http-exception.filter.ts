@@ -1,6 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Response } from 'express';
 import { HttpException } from '../common/exception/http.exception';
+import { isEmpty } from '../lib/utils';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -18,21 +19,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
       statusCode: 400;
       message: string[];
     };
-    //Logger.error(message, (exception as any).stack, `${request.method} ${request.url}`);
 
-    if (typeof err !== 'string' && err.error === 'Bad Request') {
-      return response.status(status).json({
-        status: status,
-        error_message: err.message[0],
-        client_message: err.message[0],
-        client_message_type: 'popup',
+    if (isEmpty(err)) {
+      response.status(status).json({
+        error_message: error_message,
+        client_message: client_message,
+        client_message_type: client_message_type,
       });
+    } else {
+      if (typeof err !== 'string' && err.error === 'Bad Request') {
+        return response.status(status).json({
+          status: status,
+          error_message: err.message[0],
+          client_message: err.message[0],
+          client_message_type: 'popup',
+        });
+      }
     }
-
-    response.status(status).json({
-      error_message: error_message,
-      client_message: client_message,
-      client_message_type: client_message_type,
-    });
   }
 }
