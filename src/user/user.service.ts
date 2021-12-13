@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import * as jwt from '../lib/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { BadRequestException } from '../common/exception/bad-request.exception';
 import { I18nRequestScopeService } from 'nestjs-i18n';
 import { NotFoundException } from '../common/exception/not-found.exception';
-import { RedisClient } from '@nestjs/microservices/external/redis.interface';
-import { InjectRedis } from '@pokeguys/nestjs-redis';
+
+import { InjectRedis, RedisClient } from '@pokeguys/nestjs-redis';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -15,6 +14,7 @@ export class UserService {
     private readonly i18n: I18nRequestScopeService,
     private connection: Connection,
     private userRepository: UserRepository,
+    private jwtService: JwtService,
     @InjectRedis() private readonly redis: RedisClient,
   ) {}
 
@@ -23,6 +23,7 @@ export class UserService {
    */
   async login(raw) {
     let user;
+
     const queryRunner = this.connection.createQueryRunner();
 
     await queryRunner.connect();
@@ -50,12 +51,11 @@ export class UserService {
       }
 
       //토큰 생성
-      const token = jwt.sign(
-        {
-          user_id: user.id,
-        },
-        null,
-      );
+      const payload = { user_id: user.id };
+      const token = this.jwtService.sign(payload);
+
+      //세션 생성
+      this.redis.pipeline().set(raw.social_id, JSON.stringify(user)).exec();
 
       //commit
       await queryRunner.commitTransaction();

@@ -14,6 +14,7 @@ import {
 } from 'nestjs-i18n';
 import * as path from 'path';
 import { RedisModule } from '@pokeguys/nestjs-redis';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RedisModule } from '@pokeguys/nestjs-redis';
       isGlobal: true,
       envFilePath: '.env.dev',
     }),
+
     RedisModule.forRoot({ uri: process.env.REDIS_URI }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,

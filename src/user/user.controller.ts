@@ -30,15 +30,15 @@ export class UserController {
 
   @Get('/nhc-login')
   async login(@Query() query: LoginRequestDto) {
-    // const [token, user] = await this.userService.login({
-    //   social_id: query.social_id,
-    //   device_token: query.device_token,
-    // });
+    const [token, user] = await this.userService.login({
+      social_id: query.social_id,
+      device_token: query.device_token,
+    });
 
-    //세션 key 저장
-    //req.session.key = social_id;
-
-    return true;
+    return {
+      token,
+      user: user,
+    };
   }
 
   @Post('/')
