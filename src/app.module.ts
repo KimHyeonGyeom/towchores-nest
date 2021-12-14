@@ -15,6 +15,8 @@ import {
 import * as path from 'path';
 import { RedisModule } from '@pokeguys/nestjs-redis';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/roles.guard';
 
 @Module({
   imports: [
@@ -22,7 +24,6 @@ import { JwtModule } from '@nestjs/jwt';
       isGlobal: true,
       envFilePath: '.env.dev',
     }),
-
     RedisModule.forRoot({ uri: process.env.REDIS_URI }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
@@ -56,7 +57,12 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
