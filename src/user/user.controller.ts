@@ -2,26 +2,18 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Post,
+  Put,
   Query,
-  Req,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UndefinedToNullInterceptor } from '../interceptors/undefinedToNull.interceptor';
 import { SignupRequestDto } from './dto/signup.request.dto';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiProduces,
-  ApiTags,
-} from '@nestjs/swagger';
-import { ApiImplicitBody } from '@nestjs/swagger/dist/decorators/api-implicit-body.decorator';
+import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { I18n, I18nContext } from 'nestjs-i18n';
 import { LoginRequestDto } from './dto/login.request.dto';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @UseInterceptors(UndefinedToNullInterceptor)
 @Controller('api/users')
@@ -29,6 +21,8 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/nhc-login')
+  @Roles('pass')
+  @ApiOperation({ summary: '로그인' })
   async login(@Query() query: LoginRequestDto) {
     const [token, user] = await this.userService.login({
       social_id: query.social_id,
@@ -42,6 +36,7 @@ export class UserController {
   }
 
   @Post('/')
+  @Roles('pass')
   @UseInterceptors(FileInterceptor('')) //postman form-data에서도 사용할 수 있도록 하기위해 추가
   @ApiOperation({ summary: '회원가입' })
   async signUp(@Body() body: SignupRequestDto) {
@@ -53,5 +48,12 @@ export class UserController {
       longitude: body.longitude,
     });
     return { user: user };
+  }
+
+  @Put('/')
+  @UseInterceptors(FileInterceptor(''))
+  @ApiOperation({ summary: '유저 수정' })
+  async updateUserProfile() {
+    return true;
   }
 }
