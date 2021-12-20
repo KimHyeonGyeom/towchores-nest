@@ -16,14 +16,19 @@ import * as path from 'path';
 import { RedisModule } from '@pokeguys/nestjs-redis';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/roles.guard';
-
+import { AuthGuard } from './auth/auth.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env.dev',
     }),
+    {
+      ...JwtModule.register({
+        secret: process.env.JWT_SECRET,
+      }),
+      global: true,
+    },
     RedisModule.forRoot({ uri: process.env.REDIS_URI }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
@@ -60,7 +65,7 @@ import { RolesGuard } from './auth/roles.guard';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      useClass: AuthGuard,
     },
   ],
 })
