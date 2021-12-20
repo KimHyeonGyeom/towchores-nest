@@ -87,4 +87,30 @@ export class UserRepository {
       throw err;
     }
   }
+
+  /**
+   * 유저 프로필 이미지 수정
+   * @param {EntityManager} transactionManager 트랜잭션
+   * @param {number} id : 유저 아이디
+   * @param {string} profile_image_url : 유저 아이디}
+   */
+  async update(
+    @TransactionManager() transactionManager: EntityManager,
+    id: string,
+    profile_image_url: string,
+  ) {
+    try {
+      return await transactionManager.update(
+        Users,
+        {
+          profile_image_url: profile_image_url,
+        },
+        {
+          id: id,
+        },
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
 }

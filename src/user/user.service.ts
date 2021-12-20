@@ -7,6 +7,7 @@ import { NotFoundException } from '../common/exception/not-found.exception';
 
 import { InjectRedis, RedisClient } from '@pokeguys/nestjs-redis';
 import { JwtService } from '@nestjs/jwt';
+import { isEmpty } from '../lib/utils';
 
 @Injectable()
 export class UserService {
@@ -123,26 +124,38 @@ export class UserService {
       await queryRunner.release();
     }
   }
-}
+  /**
+   * 유저 프로필 수정
+   * @param {object} raw - {user_id : 유저 아이디, image : 프로필 이미지, transaction : 트랜잭션 }
+   */
+  async updateUser(raw: any) {
+    const queryRunner = this.connection.createQueryRunner();
 
-//   if (!user) {
-//     throw new NotFoundException(__("ERROR_USER_NOT_FOUND_MESSAGE"));
-//   }
-//
-//   //저장된 디바이스 토큰이 다르면 새로운 토큰으로 변경
-//   if (user.device_token !== raw.device_token) {
-//     await this.userRepository.updateDeviceToken(raw);
-//     user = await this.userRepository.findBySocialId({
-//       id: raw.social_id,
-//       transaction: raw.transaction
-//     });
-//   }
-//
-//   //토큰 생성
-//   const token = jwt.sign({
-//     user_id: user.id,
-//   });
-//
-//
-//   return [token, user]
-// }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      //유저 프로필 수정
+      if (!isEmpty(raw.image))
+        await this.userRepository.update(
+          queryRunner.manager,
+          raw.user_id,
+          raw.image,
+        );
+
+      //수정 후 유저 조회 반환
+      // return await this.userRepository.userFindById(
+      //   queryRunner.manager,
+      //   raw.user_id,
+      // );
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors lets rollback the changes we made
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      // you need to release a queryRunner which was manually instantiated
+      await queryRunner.release();
+    }
+  }
+}
