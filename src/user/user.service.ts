@@ -7,7 +7,7 @@ import { NotFoundException } from '../common/exception/not-found.exception';
 
 import { InjectRedis, RedisClient } from '@pokeguys/nestjs-redis';
 import { JwtService } from '@nestjs/jwt';
-import { isEmpty } from '../lib/utils';
+import { isEmpty, uploadS3 } from '../lib/utils';
 import { S3 } from 'aws-sdk';
 import { Users } from '../entities/Users';
 
@@ -141,7 +141,7 @@ export class UserService {
       //S3 Upload
       const { originalname } = raw.image;
       const bucketS3 = process.env.S3_BUCKET;
-      const s3Result: any = await this.uploadS3(
+      const s3Result: any = await uploadS3(
         raw.image.buffer,
         bucketS3,
         originalname,
@@ -170,29 +170,5 @@ export class UserService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
-  }
-
-  async uploadS3(file, bucket, name) {
-    const s3 = this.getS3();
-    const params = {
-      Bucket: bucket,
-      Key: String(name),
-      Body: file,
-    };
-    return new Promise((resolve, reject) => {
-      s3.upload(params, (err, data) => {
-        if (err) {
-          reject(err.message);
-        }
-        resolve(data);
-      });
-    });
-  }
-
-  getS3() {
-    return new S3({
-      accessKeyId: process.env.S3_ACCESS_KEY_ID,
-      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    });
   }
 }
