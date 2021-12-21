@@ -51,6 +51,7 @@ export class UserService {
         user = await this.userRepository.findBySocialId(
           raw.social_id,
           queryRunner.manager,
+          Users,
         );
       }
 
@@ -157,8 +158,9 @@ export class UserService {
 
       //수정 후 유저 조회 반환
       const user = await this.userRepository.findById(
-        queryRunner.manager,
         raw.user_id,
+        queryRunner.manager,
+        Users,
       );
       await queryRunner.commitTransaction();
       return user;

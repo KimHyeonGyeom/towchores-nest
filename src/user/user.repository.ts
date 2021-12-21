@@ -31,7 +31,7 @@ export class UserRepository {
    * @param {Users} Users 유저
    */
   async findById(
-    id,
+    id: number,
     @TransactionManager() transactionManager?: EntityManager,
     Users?,
   ) {
