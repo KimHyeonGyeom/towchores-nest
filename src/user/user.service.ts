@@ -8,6 +8,8 @@ import { NotFoundException } from '../common/exception/not-found.exception';
 import { InjectRedis, RedisClient } from '@pokeguys/nestjs-redis';
 import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from '../lib/utils';
+import { S3 } from 'aws-sdk';
+import { Users } from '../entities/Users';
 
 @Injectable()
 export class UserService {
@@ -33,8 +35,9 @@ export class UserService {
     try {
       //유저 정보 조회
       user = await this.userRepository.findBySocialId(
-        queryRunner.manager,
         raw.social_id,
+        queryRunner.manager,
+        Users,
       );
       if (!user) {
         throw new NotFoundException(
@@ -46,8 +49,8 @@ export class UserService {
       if (user.device_token !== raw.device_token) {
         await this.userRepository.updateDeviceToken(queryRunner.manager, raw);
         user = await this.userRepository.findBySocialId(
-          queryRunner.manager,
           raw.social_id,
+          queryRunner.manager,
         );
       }
 
@@ -92,8 +95,8 @@ export class UserService {
     try {
       //닉네임 중복 체크
       const hasNickname = await this.userRepository.countByNickName(
-        queryRunner.manager,
         raw.nickname,
+        queryRunner.manager,
       );
       if (hasNickname) {
         throw new BadRequestException(
@@ -135,20 +138,30 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
+      //S3 Upload
+      const { originalname } = raw.image;
+      const bucketS3 = process.env.S3_BUCKET;
+      const s3Result: any = await this.uploadS3(
+        raw.image.buffer,
+        bucketS3,
+        originalname,
+      );
+
       //유저 프로필 수정
       if (!isEmpty(raw.image))
         await this.userRepository.update(
           queryRunner.manager,
           raw.user_id,
-          raw.image,
+          s3Result.Location,
         );
 
       //수정 후 유저 조회 반환
-      // return await this.userRepository.userFindById(
-      //   queryRunner.manager,
-      //   raw.user_id,
-      // );
+      const user = await this.userRepository.findById(
+        queryRunner.manager,
+        raw.user_id,
+      );
       await queryRunner.commitTransaction();
+      return user;
     } catch (err) {
       // since we have errors lets rollback the changes we made
       await queryRunner.rollbackTransaction();
@@ -157,5 +170,29 @@ export class UserService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
+  }
+
+  async uploadS3(file, bucket, name) {
+    const s3 = this.getS3();
+    const params = {
+      Bucket: bucket,
+      Key: String(name),
+      Body: file,
+    };
+    return new Promise((resolve, reject) => {
+      s3.upload(params, (err, data) => {
+        if (err) {
+          reject(err.message);
+        }
+        resolve(data);
+      });
+    });
+  }
+
+  getS3() {
+    return new S3({
+      accessKeyId: process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    });
   }
 }

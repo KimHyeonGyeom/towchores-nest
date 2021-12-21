@@ -66,8 +66,6 @@ export class UserController {
       image: image,
     });
 
-    // return ResponseSucceed({
-    //   user : user
-    // });
+    return { user: user };
   }
 }

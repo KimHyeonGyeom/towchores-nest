@@ -1,40 +1,60 @@
-import {
-  Repository,
-  EntityRepository,
-  EntityManager,
-  TransactionManager,
-  QueryFailedError,
-} from 'typeorm';
+import { EntityManager, Repository, TransactionManager } from 'typeorm';
 import { Users } from '../entities/Users';
-import { HttpException, Injectable } from '@nestjs/common';
-import { TypeORMError } from 'typeorm/error/TypeORMError';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { Entity } from 'typeorm-model-generator';
 
 export class UserRepository {
+  constructor(
+    @InjectRepository(Users) private usersRepository: Repository<Users>,
+  ) {}
   /**
    * 유저 정보 조회
-   * @param {EntityManager} transactionManager 트랜잭션
    * @param {number} id 유저 아이디
+   * @param {EntityManager} transactionManager 트랜잭션
+   * @param {Users} Users 유저
    */
   async findBySocialId(
-    @TransactionManager() transactionManager: EntityManager,
     id: number,
+    @TransactionManager() transactionManager?: EntityManager,
+    Users?,
   ) {
-    return await transactionManager.findOne(Users, {
+    return await this.repository(transactionManager).findOne(Users, {
       where: { social_id: id },
     });
   }
 
   /**
-   * 유저 레코드 수 조회
+   * 유저 정보 조회
+   * @param {object} id id : 유저 아이디
    * @param {EntityManager} transactionManager 트랜잭션
+   * @param {Users} Users 유저
+   */
+  async findById(
+    id,
+    @TransactionManager() transactionManager?: EntityManager,
+    Users?,
+  ) {
+    return await this.repository(transactionManager).findOne(Users, {
+      select: ['id', 'role', 'nickname', 'profile_image_url', 'device_token'],
+      where: {
+        id: id,
+      },
+    });
+  }
+  /**
+   * 유저 레코드 수 조회
    * @param {string} nickname 닉네임
+   * @param {EntityManager} transactionManager 트랜잭션
+   * @param {Users} Users 유저
    */
   async countByNickName(
-    @TransactionManager() transactionManager: EntityManager,
     nickname: string,
+    @TransactionManager() transactionManager?: EntityManager,
+    Users?,
   ) {
     try {
-      return await transactionManager.count(Users, {
+      return await this.repository(transactionManager).count(Users, {
         where: {
           nickname,
         },
@@ -78,10 +98,10 @@ export class UserRepository {
     try {
       return await transactionManager.update(
         Users,
-        { social_id: raw.social_id },
         {
           device_token: raw.device_token,
         },
+        { social_id: raw.social_id },
       );
     } catch (err) {
       throw err;
@@ -96,21 +116,26 @@ export class UserRepository {
    */
   async update(
     @TransactionManager() transactionManager: EntityManager,
-    id: string,
+    id: number,
     profile_image_url: string,
   ) {
     try {
       return await transactionManager.update(
         Users,
         {
-          profile_image_url: profile_image_url,
+          id: id,
         },
         {
-          id: id,
+          profile_image_url: profile_image_url,
         },
       );
     } catch (err) {
       throw err;
     }
+  }
+
+  repository(transactionManager): any {
+    if (transactionManager === undefined) return this.usersRepository;
+    else return transactionManager;
   }
 }
