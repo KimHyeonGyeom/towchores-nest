@@ -17,6 +17,12 @@ import { RedisModule } from '@pokeguys/nestjs-redis';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
+import { PostModule } from './post/post.module';
+import { Posts } from './entities/Posts';
+import { Hashtags } from './entities/Hashtags';
+import { GoodPostsHis } from './entities/GoodPostsHis';
+import { Images } from './entities/Images';
+import { Likes } from './entities/Likes';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -37,14 +43,20 @@ import { AuthGuard } from './auth/auth.guard';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Users],
+      entities: [Users, Posts, Hashtags, GoodPostsHis, Images, Likes],
       charset: 'utf8mb4',
       synchronize: false,
       logging: true,
       keepConnectionAlive: true,
     }),
-    UserModule,
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([
+      Users,
+      Posts,
+      Hashtags,
+      GoodPostsHis,
+      Images,
+      Likes,
+    ]),
     I18nModule.forRoot({
       //nest-cli.json 파일에서 "watchAssets": true 추가해줘야만 consts.json에서 새로운 key를 추가할 때 dist 파일과 동기화가 됨.
       fallbackLanguage: 'ko',
@@ -60,6 +72,8 @@ import { AuthGuard } from './auth/auth.guard';
         new CookieResolver(['lang', 'locale', 'l']),
       ],
     }),
+    UserModule,
+    PostModule,
   ],
   controllers: [],
   providers: [
