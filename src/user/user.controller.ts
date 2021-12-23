@@ -5,7 +5,6 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
   Request,
   UseInterceptors,
   UploadedFile,
@@ -17,7 +16,6 @@ import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { Roles } from '../common/decorators/roles.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 
 @UseInterceptors(UndefinedToNullInterceptor)
 @Controller('api/users')
@@ -56,7 +54,7 @@ export class UserController {
 
   @Put('/')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiOperation({ summary: '유저 수정' })
+  @ApiOperation({ summary: '유저 프로필 수정' })
   async updateUserProfile(@Request() req, @UploadedFile() file) {
     const user_id = req.token_user_id;
     const image = file;
