@@ -28,7 +28,7 @@ export class PostRepository {
     @TransactionManager() transactionManager?: EntityManager,
   ) {
     try {
-      return await transactionManager.save(Users, {
+      return await transactionManager.save(Posts, {
         user_id,
         title,
         content,

@@ -3,8 +3,8 @@ import { I18nRequestScopeService } from 'nestjs-i18n';
 import { Connection } from 'typeorm';
 import { PostRepository } from './post.repository';
 import { isEmpty, uploadS3 } from '../lib/utils';
-import { Posts } from '../entities/Posts';
-import { promises } from 'dns';
+import { ImageRepository } from '../image/image.repository';
+import { Images } from '../entities/Images';
 
 @Injectable()
 export class PostService {
@@ -12,6 +12,7 @@ export class PostService {
     private readonly i18n: I18nRequestScopeService,
     private connection: Connection,
     private postRepository: PostRepository,
+    private imageRepository: ImageRepository,
   ) {}
 
   /**
@@ -29,15 +30,15 @@ export class PostService {
 
     try {
       //게시글 DB 저장
-      // const post = await this.postRepository.createPost(
-      //   raw.user_id,
-      //   raw.title,
-      //   raw.content,
-      //   raw.latitude,
-      //   raw.longitude,
-      //   raw.area,
-      //   queryRunner.manager,
-      // );
+      const post = await this.postRepository.createPost(
+        raw.user_id,
+        raw.title,
+        raw.content,
+        raw.latitude,
+        raw.longitude,
+        raw.area,
+        queryRunner.manager,
+      );
 
       // //게시글 이미지 DB 저장
       if (!isEmpty(raw.images)) {
@@ -47,11 +48,12 @@ export class PostService {
           const s3Result: any = await uploadS3(image.buffer, bucketS3, image);
           //이미지 배열에 저장
           imageList.push({
-            //post_id: post.id,
+            post_id: post.id,
             user_id: raw.user_id,
             image_name_url: s3Result.location,
           });
         }
+        await this.imageRepository.bulkCreate(imageList, queryRunner.manager);
       }
 
       await queryRunner.commitTransaction();
