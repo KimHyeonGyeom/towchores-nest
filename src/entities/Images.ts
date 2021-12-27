@@ -9,7 +9,7 @@ import {
 import { Posts } from './Posts';
 
 @Index('post_id', ['postId'], {})
-@Entity('images ', { schema: 'neighborhood-chores' })
+@Entity('images', { schema: 'neighborhood-chores' })
 export class Images {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
