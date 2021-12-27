@@ -23,6 +23,10 @@ import { Hashtags } from './entities/Hashtags';
 import { GoodPostsHis } from './entities/GoodPostsHis';
 import { Images } from './entities/Images';
 import { Likes } from './entities/Likes';
+import { ImageModule } from './image/image.module';
+import { Blames } from './entities/Blames';
+import { Comments } from './entities/Comments';
+import { Follows } from './entities/Follows';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -43,7 +47,17 @@ import { Likes } from './entities/Likes';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Users, Posts, Hashtags, GoodPostsHis, Images, Likes],
+      entities: [
+        Users,
+        Posts,
+        Hashtags,
+        GoodPostsHis,
+        Images,
+        Likes,
+        Blames,
+        Comments,
+        Follows,
+      ],
       charset: 'utf8mb4',
       synchronize: false,
       logging: true,
@@ -74,6 +88,7 @@ import { Likes } from './entities/Likes';
     }),
     UserModule,
     PostModule,
+    ImageModule,
   ],
   controllers: [],
   providers: [
