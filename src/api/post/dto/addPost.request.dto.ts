@@ -1,4 +1,4 @@
-import { Posts } from '../../entities/Posts';
+import { Posts } from '../../../entities/Posts';
 import { PickType } from '@nestjs/swagger';
 
 export class addPostRequestDto extends PickType(Posts, [
