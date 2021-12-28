@@ -1,11 +1,14 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Hashtags } from './Hashtags';
 import { GoodPostsHis } from './GoodPostsHis';
@@ -77,23 +80,33 @@ export class Posts {
   area: string;
 
   @ApiProperty({
-    example: 'now()',
-    description: '생성 날짜',
+    example: '',
+    description: '생성날짜',
+  })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   @Column('datetime', { name: 'created_at' })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'now()',
-    description: '수정 날짜',
+    example: '',
+    description: '수정날짜',
+  })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   @Column('datetime', { name: 'updated_at' })
   updatedAt: Date;
 
   @ApiProperty({
-    example: 'now()',
-    description: '삭제 날짜',
+    example: '',
+    description: '삭제날짜',
   })
+  @DeleteDateColumn()
   @Column('datetime', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
