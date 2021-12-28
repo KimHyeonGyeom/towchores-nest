@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
   Query,
@@ -7,7 +8,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { UndefinedToNullInterceptor } from '../interceptors/undefinedToNull.interceptor';
+import { UndefinedToNullInterceptor } from '../../interceptors/undefinedToNull.interceptor';
 import { PostService } from './post.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { addPostRequestDto } from './dto/addPost.request.dto';
@@ -22,7 +23,7 @@ export class PostController {
   @UseInterceptors(FilesInterceptor('files'))
   @ApiOperation({ summary: '게시글 등록' })
   async addPost(
-    @Query() body: addPostRequestDto,
+    @Body() body: addPostRequestDto,
     @Request() req,
     @UploadedFiles() files,
   ) {

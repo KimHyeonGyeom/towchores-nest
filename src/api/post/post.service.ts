@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { I18nRequestScopeService } from 'nestjs-i18n';
 import { Connection } from 'typeorm';
 import { PostRepository } from './post.repository';
-import { isEmpty, uploadS3 } from '../lib/utils';
+import { isEmpty, uploadS3 } from '../../lib/utils';
 import { ImageRepository } from '../image/image.repository';
-import { Images } from '../entities/Images';
+import { Images } from '../../entities/Images';
+import { HashtagRepository } from '../hashtag/hashtag.repository';
 
 @Injectable()
 export class PostService {
@@ -13,6 +14,7 @@ export class PostService {
     private connection: Connection,
     private postRepository: PostRepository,
     private imageRepository: ImageRepository,
+    private hashtagRepository: HashtagRepository,
   ) {}
 
   /**
@@ -48,9 +50,9 @@ export class PostService {
           const s3Result: any = await uploadS3(image.buffer, bucketS3, image);
           //이미지 배열에 저장
           imageList.push({
-            post_id: post.id,
-            user_id: raw.user_id,
-            image_name_url: s3Result.location,
+            postId: post.id,
+            userId: raw.user_id,
+            imageNameUrl: s3Result.Location,
           });
         }
         await this.imageRepository.bulkCreate(imageList, queryRunner.manager);

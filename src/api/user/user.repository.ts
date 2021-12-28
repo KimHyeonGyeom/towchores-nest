@@ -1,5 +1,5 @@
 import { EntityManager, Repository, TransactionManager } from 'typeorm';
-import { Users } from '../entities/Users';
+import { Users } from '../../entities/Users';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { Entity } from 'typeorm-model-generator';

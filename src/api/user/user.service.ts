@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { UserRepository } from './user.repository';
-import { BadRequestException } from '../common/exception/bad-request.exception';
+import { BadRequestException } from '../../common/exception/bad-request.exception';
 import { I18nRequestScopeService } from 'nestjs-i18n';
-import { NotFoundException } from '../common/exception/not-found.exception';
+import { NotFoundException } from '../../common/exception/not-found.exception';
 
 import { InjectRedis, RedisClient } from '@pokeguys/nestjs-redis';
 import { JwtService } from '@nestjs/jwt';
-import { isEmpty, uploadS3 } from '../lib/utils';
+import { isEmpty, uploadS3 } from '../../lib/utils';
 import { S3 } from 'aws-sdk';
-import { Users } from '../entities/Users';
+import { Users } from '../../entities/Users';
 
 @Injectable()
 export class UserService {

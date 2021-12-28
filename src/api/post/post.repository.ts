@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository, TransactionManager } from 'typeorm';
-import { Posts } from '../entities/Posts';
-import { Users } from '../entities/Users';
+import { Posts } from '../../entities/Posts';
+import { Users } from '../../entities/Users';
 
 export class PostRepository {
   constructor(
@@ -29,12 +29,12 @@ export class PostRepository {
   ) {
     try {
       return await transactionManager.save(Posts, {
-        user_id,
-        title,
-        content,
-        latitude,
-        longitude,
-        area,
+        userId: user_id,
+        title: title,
+        content: content,
+        latitude: latitude,
+        longitude: longitude,
+        area: area,
       });
     } catch (err: any) {
       throw err;

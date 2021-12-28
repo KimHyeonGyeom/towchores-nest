@@ -10,12 +10,12 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UndefinedToNullInterceptor } from '../interceptors/undefinedToNull.interceptor';
+import { UndefinedToNullInterceptor } from '../../interceptors/undefinedToNull.interceptor';
 import { SignupRequestDto } from './dto/signup.request.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LoginRequestDto } from './dto/login.request.dto';
-import { Roles } from '../common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @UseInterceptors(UndefinedToNullInterceptor)
 @Controller('api/users')
