@@ -21,7 +21,10 @@ export const uploadS3 = (file, bucket, name) => {
   const s3 = getS3();
   const params = {
     Bucket: bucket,
-    Key: String(name),
+    Key:
+      process.env.NODE_ENV === 'production'
+        ? `real-images/${Date.now()}${name.originalname}`
+        : `dev-images/${Date.now()}${name.originalname}`,
     Body: file,
   };
   return new Promise((resolve, reject) => {
