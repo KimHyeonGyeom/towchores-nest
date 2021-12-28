@@ -1,8 +1,8 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { UserModule } from './user/user.module';
+import { UserModule } from './api/user/user.module';
 import { Users } from './entities/Users';
 import {
   I18nModule,
@@ -17,16 +17,17 @@ import { RedisModule } from '@pokeguys/nestjs-redis';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
-import { PostModule } from './post/post.module';
+import { PostModule } from './api/post/post.module';
 import { Posts } from './entities/Posts';
 import { Hashtags } from './entities/Hashtags';
 import { GoodPostsHis } from './entities/GoodPostsHis';
 import { Images } from './entities/Images';
 import { Likes } from './entities/Likes';
-import { ImageModule } from './image/image.module';
+import { ImageModule } from './api/image/image.module';
 import { Blames } from './entities/Blames';
 import { Comments } from './entities/Comments';
 import { Follows } from './entities/Follows';
+import { HashtagModule } from './api/hashtag/hashtag.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -89,6 +90,7 @@ import { Follows } from './entities/Follows';
     UserModule,
     PostModule,
     ImageModule,
+    HashtagModule,
   ],
   controllers: [],
   providers: [
