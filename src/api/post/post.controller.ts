@@ -27,7 +27,7 @@ export class PostController {
     @Request() req,
     @UploadedFiles() files,
   ) {
-    await this.postService.addPost({
+    const post = await this.postService.addPost({
       user_id: req.token_user_id,
       title: body.title,
       content: body.content,
@@ -35,6 +35,9 @@ export class PostController {
       longitude: body.longitude,
       area: body.area,
       images: files,
+      hashtags: body.hashtags as Array<any>,
     });
+
+    return { post: post };
   }
 }

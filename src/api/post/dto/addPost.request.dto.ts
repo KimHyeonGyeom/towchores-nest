@@ -7,4 +7,5 @@ export class addPostRequestDto extends PickType(Posts, [
   'latitude',
   'longitude',
   'area',
+  'hashtags',
 ] as const) {}

@@ -48,7 +48,7 @@ export class PostService {
           //S3 Upload
           const bucketS3 = process.env.S3_BUCKET;
           const s3Result: any = await uploadS3(image.buffer, bucketS3, image);
-          //이미지 배열에 저장
+          //해시태그 배열에 저장
           imageList.push({
             postId: post.id,
             userId: raw.user_id,
@@ -58,7 +58,30 @@ export class PostService {
         await this.imageRepository.bulkCreate(imageList, queryRunner.manager);
       }
 
+      //해시태그 DB 저장
+      if (!isEmpty(raw.hashtags)) {
+        if (raw.hashtags.type === 'array') {
+          for (const hashtag of raw.hashtags) {
+            //이미지 배열에 저장
+            hashtagList.push({
+              post_id: post.id,
+              keyword: hashtag,
+            });
+          }
+        } else {
+          hashtagList.push({
+            postId: post.id,
+            keyword: raw.hashtags,
+          });
+        }
+        await this.hashtagRepository.bulkCreate(
+          hashtagList,
+          queryRunner.manager,
+        );
+      }
+
       await queryRunner.commitTransaction();
+      return post;
     } catch (err) {
       // since we have errors lets rollback the changes we made
       await queryRunner.rollbackTransaction();
