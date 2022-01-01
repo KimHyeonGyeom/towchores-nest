@@ -28,6 +28,8 @@ import { Blames } from './entities/Blames';
 import { Comments } from './entities/Comments';
 import { Follows } from './entities/Follows';
 import { HashtagModule } from './api/hashtag/hashtag.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -63,6 +65,7 @@ import { HashtagModule } from './api/hashtag/hashtag.module';
       synchronize: false,
       logging: true,
       keepConnectionAlive: true,
+      namingStrategy: new SnakeNamingStrategy(), //Camelcase 필드를 Snake 컬럼에 매핑하기
     }),
     TypeOrmModule.forFeature([
       Users,
