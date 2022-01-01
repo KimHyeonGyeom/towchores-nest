@@ -6,6 +6,7 @@ import { isEmpty, uploadS3 } from '../../lib/utils';
 import { ImageRepository } from '../image/image.repository';
 import { Images } from '../../entities/Images';
 import { HashtagRepository } from '../hashtag/hashtag.repository';
+import { NotFoundException } from '../../common/exception/not-found.exception';
 
 @Injectable()
 export class PostService {
@@ -90,25 +91,20 @@ export class PostService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
+  }
 
-    //   await this.imageRepository.bulkCreateImages({
-    //     imageList: imageList,
-    //     transaction: raw.transaction,
-    //   });
-    // }
-    //
-    // //해시태그 저장
-    // if (!isEmpty(raw.hashtags)) {
-    //   for (const keyword of raw.hashtags) {
-    //     hashtagList.push({
-    //       post_id: post.id,
-    //       keyword: keyword,
-    //     });
-    //   }
-    //   await this.hashtagRepository.bulkCreateHashtags({
-    //     hashtagList: hashtagList,
-    //     transaction: raw.transaction,
-    //   });
-    // }
+  /**
+   * 게시글 조회
+   * @param {object} raw - {post_id : 게시글 아이디, user_id :  유저 아이디 , transaction : 트랜잭션}
+   */
+  async getPost(raw: any) {
+    const post = await this.postRepository.findById(raw.post_id, raw.user_id);
+    if (!post) {
+      // throw new NotFoundException(
+      //   __('ERROR_POST_NOT_FOUND_MESSAGE'),
+      //   __('ERROR_POST_NOT_FOUND_CLIENT_MESSAGE'),
+      // );
+    }
+    return post;
   }
 }

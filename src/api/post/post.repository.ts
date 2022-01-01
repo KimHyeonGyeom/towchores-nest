@@ -40,4 +40,31 @@ export class PostRepository {
       throw err;
     }
   }
+
+  /**
+   * 게시글 상세 조회
+   * @param {object} post_id : 게시글 아이디
+   * @param {object} user_id : 유저 아이디
+   * @param {EntityManager} transactionManager 트랜잭션
+   */
+  async findById(
+    post_id,
+    user_id,
+    @TransactionManager() transactionManager?: EntityManager,
+  ) {
+    try {
+      return await this.repository(transactionManager)
+        .createQueryBuilder('posts')
+        .select(['posts.id'])
+        .where('posts.id = :post_id', { post_id })
+        .getOne();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  repository(transactionManager): any {
+    if (transactionManager === undefined) return this.postsRepository;
+    else return transactionManager;
+  }
 }

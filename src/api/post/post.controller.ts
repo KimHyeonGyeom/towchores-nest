@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Query,
   Request,
@@ -36,6 +37,17 @@ export class PostController {
       area: body.area,
       images: files,
       hashtags: body.hashtags as Array<any>,
+    });
+
+    return { post: post };
+  }
+
+  @Get('/')
+  @ApiOperation({ summary: '게시글 상세조회' })
+  async getPost(@Query() query, @Request() req) {
+    const post = await this.postService.getPost({
+      post_id: query.post_id,
+      user_id: req.token_user_id,
     });
 
     return { post: post };
