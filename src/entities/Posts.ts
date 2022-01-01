@@ -4,8 +4,10 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,6 +17,7 @@ import { GoodPostsHis } from './GoodPostsHis';
 import { Images } from './Images';
 import { Likes } from './Likes';
 import { ApiProperty } from '@nestjs/swagger';
+import { Users } from './Users';
 
 @Index(
   'posts_user_id_IDX',
@@ -133,4 +136,7 @@ export class Posts {
 
   @OneToMany(() => Likes, (likes) => likes.post)
   likes: Likes[];
+
+  @ManyToOne(() => Users, (Users) => Users.posts)
+  user: Users;
 }

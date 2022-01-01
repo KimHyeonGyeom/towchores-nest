@@ -4,6 +4,9 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,6 +18,7 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Posts } from './Posts';
 
 @Index('nickname', ['nickname'], { unique: true })
 @Index('social_id', ['social_id'], { unique: true })
@@ -171,4 +175,7 @@ export class Users {
   @IsBoolean()
   @Column('tinyint', { name: 'user_type', nullable: true })
   user_type: number | null;
+
+  @JoinColumn([{ name: 'id', referencedColumnName: 'user_id' }])
+  posts: Posts;
 }
